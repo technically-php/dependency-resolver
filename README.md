@@ -59,5 +59,5 @@ $service = $resolver->resolve(MyFancyService::class);
 
 [1]: https://www.php-fig.org/psr/psr-11/
 [2]: https://getcomposer.org/
-[3]: https://github.com/e1himself
+[3]: https://github.com/e1himself?utm_source=web&utm_medium=github&utm_campaign=technically/dependency-resolver
 [badge]: https://github.com/technically-php/array-container/actions/workflows/test.yml/badge.svg
