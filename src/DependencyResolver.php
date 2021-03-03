@@ -126,7 +126,7 @@ final class DependencyResolver
             return $argument->getDefaultValue();
         }
 
-        if ($argument->isNullable()) {
+        if ($argument->isNullable() && count($argument->getTypes()) > 0) {
             return null;
         }
 

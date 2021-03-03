@@ -11,6 +11,7 @@ use Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyNullableArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyOptionalArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService;
+use Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService;
 
 describe('DependencyResolver', function() {
     it('should instantiate', function () {
@@ -120,5 +121,22 @@ describe('DependencyResolver', function() {
         assert($exception->getDependencyName() === MyUnresolvableScalarArgumentService::class);
         assert($exception->getArgumentName() === 'name');
         assert($exception->getMessage() === 'Could not autowire argument `name` for `Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService`.');
+    });
+
+    it('should throw exception if untyped dependency cannot be autowired', function () {
+        $container = new ArrayContainer();
+        $resolver = new DependencyResolver($container);
+
+        try {
+            $resolver->resolve(MyUntypedArgumentService::class);
+        } catch (Exception $exception) {
+            // passthru
+        }
+
+        assert(isset($exception));
+        assert($exception instanceof CannotAutowireDependencyArgument);
+        assert($exception->getDependencyName() === MyUntypedArgumentService::class);
+        assert($exception->getArgumentName() === 'input');
+        assert($exception->getMessage() === 'Could not autowire argument `input` for `Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService`.');
     });
 });
