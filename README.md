@@ -37,7 +37,7 @@ final class MyFancyService
 }
 
 // Resolve service instance, providing dependencies in-place:
-$resolver = new DependencyResolver($container);
+$resolver = new DependencyResolver();
 $service = $resolver->resolve(MyFancyService::class, [
     'log' => function (string $priority, string $message) {
         error_log("[$priority]: $message");
