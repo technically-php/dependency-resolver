@@ -13,7 +13,8 @@
         "psr/container": "^1.0"
     },
     "require-dev": {
-        "peridot-php/peridot": "^1.19"
+        "peridot-php/peridot": "^1.19",
+        "technically/array-container": "^1.0"
     },
     "license": "MIT",
     "authors": [
@@ -26,6 +27,11 @@
     "autoload": {
         "psr-4": {
             "Technically\\DependencyResolver\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Technically\\DependencyResolver\\Specs\\": "specs"
         }
     }
 }
