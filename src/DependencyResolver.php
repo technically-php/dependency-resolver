@@ -11,6 +11,7 @@ use ReflectionParameter;
 use ReflectionUnionType;
 use Technically\DependencyResolver\Arguments\Argument;
 use Technically\DependencyResolver\Arguments\Type;
+use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
 
 final class DependencyResolver
 {
@@ -32,13 +33,15 @@ final class DependencyResolver
     /**
      * @param string $className
      * @param array $bindings
+     *
+     * @throws ClassCannotBeInstantiated
      */
     public function resolve(string $className, array $bindings = [])
     {
         $reflection = self::reflectClass($className);
 
         if (! $reflection->isInstantiable()) {
-            throw new LogicException("Cannot instantiuate `{$className}`.");
+            throw new ClassCannotBeInstantiated($className);
         }
 
         $values = [];

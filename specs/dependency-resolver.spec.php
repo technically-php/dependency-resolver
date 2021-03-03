@@ -3,6 +3,8 @@
 use Psr\Container\ContainerInterface;
 use Technically\ArrayContainer\ArrayContainer;
 use Technically\DependencyResolver\DependencyResolver;
+use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
+use Technically\DependencyResolver\Specs\Fixtures\MyAbstractClass;
 use Technically\DependencyResolver\Specs\Fixtures\MyConcreteContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService;
 
@@ -45,5 +47,20 @@ describe('DependencyResolver', function() {
         assert($resolved instanceof MyConcreteContainerService);
         assert($resolved->container instanceof ArrayContainer);
         assert($resolved->container !== $container);
+    });
+
+    it('should throw exception if class being resolved is abstract', function () {
+        $container = new ArrayContainer();
+        $resolver = new DependencyResolver($container);
+
+        try {
+            $resolver->resolve(MyAbstractClass::class);
+        } catch (Exception $exception) {
+            // passthru
+        }
+
+        assert(isset($exception));
+        assert($exception instanceof ClassCannotBeInstantiated);
+        assert($exception->getClassName() === MyAbstractClass::class);
     });
 });
