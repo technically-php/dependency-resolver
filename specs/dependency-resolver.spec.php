@@ -7,6 +7,8 @@ use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
 use Technically\DependencyResolver\Specs\Fixtures\MyAbstractClass;
 use Technically\DependencyResolver\Specs\Fixtures\MyConcreteContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService;
+use Technically\DependencyResolver\Specs\Fixtures\MyNullableArgumentService;
+use Technically\DependencyResolver\Specs\Fixtures\MyOptionalArgumentService;
 
 describe('DependencyResolver', function() {
     it('should instantiate', function () {
@@ -47,6 +49,26 @@ describe('DependencyResolver', function() {
         assert($resolved instanceof MyConcreteContainerService);
         assert($resolved->container instanceof ArrayContainer);
         assert($resolved->container !== $container);
+    });
+
+    it('should instantiate a class falling back to default values, if possible', function () {
+        $container = new ArrayContainer();
+        $resolver = new DependencyResolver($container);
+
+        $resolved = $resolver->resolve(MyOptionalArgumentService::class);
+
+        assert($resolved instanceof MyOptionalArgumentService);
+        assert($resolved->name === 'MyOptionalArgumentService');
+    });
+
+    it('should instantiate a class falling back to null when there is no other choice', function () {
+        $container = new ArrayContainer();
+        $resolver = new DependencyResolver($container);
+
+        $resolved = $resolver->resolve(MyNullableArgumentService::class);
+
+        assert($resolved instanceof MyNullableArgumentService);
+        assert($resolved->container === null);
     });
 
     it('should throw exception if class being resolved is abstract', function () {
