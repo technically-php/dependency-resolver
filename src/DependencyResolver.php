@@ -13,6 +13,7 @@ use Technically\DependencyResolver\Arguments\Type;
 use Technically\DependencyResolver\Exceptions\CannotAutowireDependencyArgument;
 use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
 use Technically\DependencyResolver\Exceptions\DependencyResolutionException;
+use Technically\NullContainer\NullContainer;
 
 final class DependencyResolver
 {
@@ -26,9 +27,9 @@ final class DependencyResolver
      */
     private static $reflections = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(?ContainerInterface $container = null)
     {
-        $this->container = $container;
+        $this->container = $container ?: new NullContainer();
     }
 
     /**

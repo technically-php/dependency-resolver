@@ -16,14 +16,14 @@ use Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService;
 
 describe('DependencyResolver', function() {
     it('should instantiate', function () {
-        $resolver = new DependencyResolver(new ArrayContainer());
+        $resolver = new DependencyResolver();
 
         assert($resolver instanceof DependencyResolver);
     });
 
     it('should instantiate a class using the bindings passed', function () {
+        $resolver = new DependencyResolver();
         $container = new ArrayContainer();
-        $resolver = new DependencyResolver($container);
 
         $resolved = $resolver->resolve(MyAbstractContainerService::class, [
             'container' => $container,
@@ -69,8 +69,7 @@ describe('DependencyResolver', function() {
     });
 
     it('should instantiate a class falling back to default values, if possible', function () {
-        $container = new ArrayContainer();
-        $resolver = new DependencyResolver($container);
+        $resolver = new DependencyResolver();
 
         $resolved = $resolver->resolve(MyOptionalArgumentService::class);
 
@@ -79,8 +78,7 @@ describe('DependencyResolver', function() {
     });
 
     it('should instantiate a class falling back to null when there is no other choice', function () {
-        $container = new ArrayContainer();
-        $resolver = new DependencyResolver($container);
+        $resolver = new DependencyResolver();
 
         $resolved = $resolver->resolve(MyNullableArgumentService::class);
 
@@ -89,8 +87,7 @@ describe('DependencyResolver', function() {
     });
 
     it('should throw exception if class being resolved is abstract', function () {
-        $container = new ArrayContainer();
-        $resolver = new DependencyResolver($container);
+        $resolver = new DependencyResolver();
 
         try {
             $resolver->resolve(MyAbstractClass::class);
@@ -104,8 +101,7 @@ describe('DependencyResolver', function() {
     });
 
     it('should throw exception if dependency class cannot be autowired', function () {
-        $container = new ArrayContainer();
-        $resolver = new DependencyResolver($container);
+        $resolver = new DependencyResolver();
 
         try {
             $resolver->resolve(MyAbstractContainerService::class);
@@ -121,8 +117,7 @@ describe('DependencyResolver', function() {
     });
 
     it('should throw exception if scalar dependency cannot be autowired', function () {
-        $container = new ArrayContainer();
-        $resolver = new DependencyResolver($container);
+        $resolver = new DependencyResolver();
 
         try {
             $resolver->resolve(MyUnresolvableScalarArgumentService::class);
@@ -138,8 +133,7 @@ describe('DependencyResolver', function() {
     });
 
     it('should throw exception if untyped dependency cannot be autowired', function () {
-        $container = new ArrayContainer();
-        $resolver = new DependencyResolver($container);
+        $resolver = new DependencyResolver();
 
         try {
             $resolver->resolve(MyUntypedArgumentService::class);
