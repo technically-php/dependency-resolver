@@ -30,7 +30,7 @@ composer require technically/dependency-resolver
 
 final class MyFancyService 
 {
-    public class __construct(callable|LoggerInterface $log) 
+    public function __construct(callable|LoggerInterface $log) 
     {
         // initialize
     }
