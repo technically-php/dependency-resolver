@@ -8,7 +8,6 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
-use ReflectionUnionType;
 use Technically\DependencyResolver\Arguments\Argument;
 use Technically\DependencyResolver\Arguments\Type;
 use Technically\DependencyResolver\Exceptions\CannotAutowireDependencyArgument;
@@ -168,7 +167,8 @@ final class DependencyResolver
             ];
         }
 
-        if (class_exists(ReflectionUnionType::class) && $type instanceof ReflectionUnionType) {
+        /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
+        if (class_exists(\ReflectionUnionType::class) && $type instanceof \ReflectionUnionType) {
              array_map(
                 function (ReflectionNamedType $type) use ($className): Type {
                     return new Type($type->getName(), $className);
