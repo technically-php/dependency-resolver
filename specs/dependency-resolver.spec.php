@@ -3,12 +3,14 @@
 use Psr\Container\ContainerInterface;
 use Technically\ArrayContainer\ArrayContainer;
 use Technically\DependencyResolver\DependencyResolver;
+use Technically\DependencyResolver\Exceptions\CannotAutowireDependencyArgument;
 use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
 use Technically\DependencyResolver\Specs\Fixtures\MyAbstractClass;
 use Technically\DependencyResolver\Specs\Fixtures\MyConcreteContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyNullableArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyOptionalArgumentService;
+use Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService;
 
 describe('DependencyResolver', function() {
     it('should instantiate', function () {
@@ -84,5 +86,39 @@ describe('DependencyResolver', function() {
         assert(isset($exception));
         assert($exception instanceof ClassCannotBeInstantiated);
         assert($exception->getClassName() === MyAbstractClass::class);
+    });
+
+    it('should throw exception if dependency class cannot be autowired', function () {
+        $container = new ArrayContainer();
+        $resolver = new DependencyResolver($container);
+
+        try {
+            $resolver->resolve(MyAbstractContainerService::class);
+        } catch (Exception $exception) {
+            // passthru
+        }
+
+        assert(isset($exception));
+        assert($exception instanceof CannotAutowireDependencyArgument);
+        assert($exception->getDependencyName() === MyAbstractContainerService::class);
+        assert($exception->getArgumentName() === 'container');
+        assert($exception->getMessage() === 'Could not autowire argument `container` for `Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService`.');
+    });
+
+    it('should throw exception if scalar dependency cannot be autowired', function () {
+        $container = new ArrayContainer();
+        $resolver = new DependencyResolver($container);
+
+        try {
+            $resolver->resolve(MyUnresolvableScalarArgumentService::class);
+        } catch (Exception $exception) {
+            // passthru
+        }
+
+        assert(isset($exception));
+        assert($exception instanceof CannotAutowireDependencyArgument);
+        assert($exception->getDependencyName() === MyUnresolvableScalarArgumentService::class);
+        assert($exception->getArgumentName() === 'name');
+        assert($exception->getMessage() === 'Could not autowire argument `name` for `Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService`.');
     });
 });
