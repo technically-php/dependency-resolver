@@ -11,8 +11,9 @@ final class ClassCannotBeInstantiated extends DependencyResolutionException
 
     public function __construct(string $className)
     {
-        parent::__construct("Class (${className}) cannot be instantiated.");
         $this->className = $className;
+
+        parent::__construct("Class (${className}) cannot be instantiated.");
     }
 
     /**
