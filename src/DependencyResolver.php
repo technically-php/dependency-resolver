@@ -169,7 +169,7 @@ final class DependencyResolver
 
         /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
         if (class_exists(\ReflectionUnionType::class) && $type instanceof \ReflectionUnionType) {
-             array_map(
+             return array_map(
                 function (ReflectionNamedType $type) use ($className): Type {
                     return new Type($type->getName(), $className);
                 },

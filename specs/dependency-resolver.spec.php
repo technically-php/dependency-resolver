@@ -10,6 +10,7 @@ use Technically\DependencyResolver\Specs\Fixtures\MyConcreteContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyNullableArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyOptionalArgumentService;
+use Technically\DependencyResolver\Specs\Fixtures\MyUnionTypeDependencyService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService;
 
@@ -42,6 +43,19 @@ describe('DependencyResolver', function() {
         assert($resolved instanceof MyAbstractContainerService);
         assert($resolved->container === $container);
     });
+
+    if (PHP_MAJOR_VERSION >= 8) {
+        it('should instantiate a class resolving union type dependencies', function () {
+            $container = new ArrayContainer();
+            $container->set(ContainerInterface::class, $container);
+            $resolver = new DependencyResolver($container);
+
+            $resolved = $resolver->resolve(MyUnionTypeDependencyService::class);
+
+            assert($resolved instanceof MyUnionTypeDependencyService);
+            assert($resolved->input === $container);
+        });
+    }
 
     it('should instantiate a class creating required dependencies recursively', function () {
         $container = new ArrayContainer();
