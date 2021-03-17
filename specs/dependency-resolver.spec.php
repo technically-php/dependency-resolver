@@ -10,6 +10,8 @@ use Technically\DependencyResolver\Specs\Fixtures\MyConcreteContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService;
 use Technically\DependencyResolver\Specs\Fixtures\MyNullableArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyOptionalArgumentService;
+use Technically\DependencyResolver\Specs\Fixtures\MyParentDependencyService;
+use Technically\DependencyResolver\Specs\Fixtures\MySelfDependencyService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUnionTypeDependencyService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService;
@@ -42,6 +44,37 @@ describe('DependencyResolver', function() {
 
         assert($resolved instanceof MyAbstractContainerService);
         assert($resolved->container === $container);
+    });
+
+    it('should instantiate a class resolving self type dependency', function () {
+        $service = new MySelfDependencyService();
+
+        $container = new ArrayContainer();
+        $container->set(MySelfDependencyService::class, $service);
+
+        $resolver = new DependencyResolver($container);
+
+        $resolved = $resolver->resolve(MySelfDependencyService::class);
+
+        assert($resolved instanceof MySelfDependencyService);
+        assert($resolved !== $service);
+        assert($resolved->parent instanceof MySelfDependencyService);
+        assert($resolved->parent === $service);
+    });
+
+    it('should instantiate a class resolving parent type dependency', function () {
+        $service = new MySelfDependencyService();
+
+        $container = new ArrayContainer();
+        $container->set(MySelfDependencyService::class, $service);
+
+        $resolver = new DependencyResolver($container);
+
+        $resolved = $resolver->resolve(MyParentDependencyService::class);
+
+        assert($resolved instanceof MyParentDependencyService);
+        assert($resolved->parent instanceof MySelfDependencyService);
+        assert($resolved->parent === $service);
     });
 
     if (PHP_MAJOR_VERSION >= 8) {
