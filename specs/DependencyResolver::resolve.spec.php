@@ -16,13 +16,7 @@ use Technically\DependencyResolver\Specs\Fixtures\MyUnionTypeDependencyService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService;
 
-describe('DependencyResolver', function() {
-    it('should instantiate', function () {
-        $resolver = new DependencyResolver();
-
-        assert($resolver instanceof DependencyResolver);
-    });
-
+describe('DependencyResolver::resolve()', function () {
     it('should instantiate a class using the bindings passed', function () {
         $resolver = new DependencyResolver();
         $container = new ArrayContainer();
