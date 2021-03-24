@@ -10,6 +10,7 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use Technically\DependencyResolver\Arguments\Argument;
 use Technically\DependencyResolver\Arguments\Type;
+use Technically\DependencyResolver\Exceptions\CannotAutowireArgument;
 use Technically\DependencyResolver\Exceptions\CannotAutowireDependencyArgument;
 use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
 use Technically\DependencyResolver\Exceptions\DependencyResolutionException;
@@ -37,6 +38,7 @@ final class DependencyResolver
      * @param array $bindings
      *
      * @throws ClassCannotBeInstantiated
+     * @throws CannotAutowireDependencyArgument
      */
     public function resolve(string $className, array $bindings = [])
     {
@@ -50,7 +52,12 @@ final class DependencyResolver
 
         if ($constructor = $reflection->getConstructor()) {
             $arguments = $this->parseArguments($constructor);
-            $values = $this->resolveArguments($className, $arguments, $bindings);
+
+            try {
+                $values = $this->resolveArguments($arguments, $bindings);
+            } catch (CannotAutowireArgument $exception) {
+                throw new CannotAutowireDependencyArgument($className, $exception->getArgumentName(), $exception);
+            }
         }
 
         return $reflection->newInstanceArgs($values);
@@ -79,34 +86,30 @@ final class DependencyResolver
     }
 
     /**
-     * @param string $className
      * @param Argument[] $arguments
      * @param array $bindings
      * @return array
      *
-     * @throws CannotAutowireDependencyArgument
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws CannotAutowireArgument
      */
-    private function resolveArguments(string $className, array $arguments, array $bindings = []): array
+    private function resolveArguments(array $arguments, array $bindings = []): array
     {
         $values = [];
         foreach ($arguments as $argument) {
-            $values[] = $this->resolveArgument($className, $argument, $bindings);
+            $values[] = $this->resolveArgument($argument, $bindings);
         }
 
         return $values;
     }
 
     /**
-     * @param string $className
      * @param Argument $argument
      * @param array $bindings
      * @return mixed|null
      *
-     * @throws CannotAutowireDependencyArgument
+     * @throws CannotAutowireArgument
      */
-    private function resolveArgument(string $className, Argument $argument, array $bindings)
+    private function resolveArgument(Argument $argument, array $bindings)
     {
         if (array_key_exists($argument->getName(), $bindings)) {
             return $bindings[$argument->getName()];
@@ -118,7 +121,7 @@ final class DependencyResolver
                 try {
                     return $this->container->get($class);
                 } catch (ContainerExceptionInterface $exception) {
-                    throw new CannotAutowireDependencyArgument($className, $argument->getName());
+                    throw new CannotAutowireArgument($argument->getName());
                 }
             }
         }
@@ -141,7 +144,7 @@ final class DependencyResolver
             }
         }
 
-        throw new CannotAutowireDependencyArgument($className, $argument->getName());
+        throw new CannotAutowireArgument($argument->getName());
     }
 
     private static function reflectClass(string $class): ReflectionClass
