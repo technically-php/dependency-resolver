@@ -2,12 +2,18 @@
 
 namespace Technically\DependencyResolver;
 
+use Closure;
+use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use ReflectionException;
+use ReflectionFunction;
+use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
+use RuntimeException;
 use Technically\DependencyResolver\Arguments\Argument;
 use Technically\DependencyResolver\Arguments\Type;
 use Technically\DependencyResolver\Exceptions\CannotAutowireArgument;
@@ -63,15 +69,26 @@ final class DependencyResolver
         return $reflection->newInstanceArgs($values);
     }
 
+    public function call(callable $callback, array $bindings = [])
+    {
+        $reflection = self::reflectCallable($callback);
+
+        $arguments = $this->parseArguments($reflection);
+        $values = $this->resolveArguments($arguments, $bindings);
+
+        return ($callback)(...$values);
+    }
+
     /**
-     * @param ReflectionMethod $function
+     * @param ReflectionFunctionAbstract $function
      * @return Argument[]
      */
-    private function parseArguments(ReflectionMethod $function): array
+    private function parseArguments(ReflectionFunctionAbstract $function): array
     {
         $arguments = [];
         foreach ($function->getParameters() as $parameter) {
-            $types = $this->getParameterTypes($parameter, $function->getDeclaringClass()->getName());
+            $className = $function instanceof ReflectionMethod ? $function->getDeclaringClass()->getName() : null;
+            $types = $this->getParameterTypes($parameter, $className);
 
             $arguments[] = new Argument(
                 $parameter->getName(),
@@ -154,6 +171,41 @@ final class DependencyResolver
         }
 
         return self::$reflections[$class] = new ReflectionClass($class);
+    }
+
+    private static function reflectCallable(callable $callable): ReflectionFunctionAbstract
+    {
+        try {
+            if ($callable instanceof Closure) {
+                return new ReflectionFunction($callable);
+            }
+
+            if (is_string($callable) && function_exists($callable)) {
+                return new ReflectionFunction($callable);
+            }
+
+            if (is_string($callable) && str_contains($callable, '::')) {
+                return new ReflectionMethod($callable);
+            }
+
+            if (is_object($callable) && method_exists($callable, '__invoke')) {
+                return new ReflectionMethod($callable, '__invoke');
+            }
+
+            if (is_array($callable)) {
+                return new ReflectionMethod($callable[0], $callable[1]);
+            }
+        } catch (ReflectionException $exception) {
+            throw new RuntimeException(
+                sprintf('Failed reflecting the given callable: %s.', get_debug_type($callable)),
+                0,
+                $exception,
+            );
+        }
+
+        throw new InvalidArgumentException(
+            sprintf("Cannot reflect the given callable: %s.", get_debug_type($callable)),
+        );
     }
 
     /**
