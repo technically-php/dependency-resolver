@@ -55,9 +55,10 @@ $service = $resolver->resolve(MyFancyService::class);
 ## Credits
 
 - Implemented by [Ivan Voskoboinyk][3]
-
+- Heavily inspired by Dawid Kraczkowski's work in [igniphp/container][4]
 
 [1]: https://www.php-fig.org/psr/psr-11/
 [2]: https://getcomposer.org/
 [3]: https://github.com/e1himself?utm_source=web&utm_medium=github&utm_campaign=technically/dependency-resolver
+[4]: https://github.com/igniphp/container
 [badge]: https://github.com/technically-php/dependency-resolver/actions/workflows/test.yml/badge.svg
