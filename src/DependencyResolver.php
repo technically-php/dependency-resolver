@@ -199,12 +199,12 @@ final class DependencyResolver
             throw new RuntimeException(
                 sprintf('Failed reflecting the given callable: %s.', get_debug_type($callable)),
                 0,
-                $exception,
+                $exception
             );
         }
 
         throw new InvalidArgumentException(
-            sprintf("Cannot reflect the given callable: %s.", get_debug_type($callable)),
+            sprintf("Cannot reflect the given callable: %s.", get_debug_type($callable))
         );
     }
 
