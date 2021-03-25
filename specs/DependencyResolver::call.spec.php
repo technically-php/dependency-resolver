@@ -8,9 +8,11 @@ use Technically\DependencyResolver\Specs\Fixtures\MyStaticMethodService;
 
 describe('DependencyResolver::call()', function () {
     it('should call global functions by name', function () {
+        require __DIR__ . '/Fixtures/my_global_function.php';
+
         $resolver = new DependencyResolver();
 
-        $value = $resolver->call('is_object', ['value' => $resolver]);
+        $value = $resolver->call('my_global_function', ['value' => $resolver]);
 
         assert($value === true);
     });
