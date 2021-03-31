@@ -52,6 +52,11 @@ $service = $resolver->resolve(MyFancyService::class);
 
 ```
 
+## Changelog
+
+All notable changes to this project will be documented in the [CHANGELOG](./CHANGELOG.md) file.
+
+
 ## Credits
 
 - Implemented by [Ivan Voskoboinyk][3]
