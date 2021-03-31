@@ -46,7 +46,7 @@ final class DependencyResolver
      * @throws ClassCannotBeInstantiated
      * @throws CannotAutowireDependencyArgument
      */
-    public function resolve(string $className, array $bindings = [])
+    public function construct(string $className, array $bindings = [])
     {
         $reflection = self::reflectClass($className);
 
@@ -154,7 +154,7 @@ final class DependencyResolver
         foreach ($argument->getTypes() as $type) {
             if ($class = $type->getClassName()) {
                 try {
-                    return $this->resolve($class);
+                    return $this->construct($class);
                 } catch (DependencyResolutionException $exception) {
                     // try another one
                 }

@@ -16,12 +16,12 @@ use Technically\DependencyResolver\Specs\Fixtures\MyUnionTypeDependencyService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService;
 use Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService;
 
-describe('DependencyResolver::resolve()', function () {
+describe('DependencyResolver::construct()', function () {
     it('should instantiate a class using the bindings passed', function () {
         $resolver = new DependencyResolver();
         $container = new ArrayContainer();
 
-        $resolved = $resolver->resolve(MyAbstractContainerService::class, [
+        $resolved = $resolver->construct(MyAbstractContainerService::class, [
             'container' => $container,
         ]);
 
@@ -34,7 +34,7 @@ describe('DependencyResolver::resolve()', function () {
         $container->set(ContainerInterface::class, $container);
         $resolver = new DependencyResolver($container);
 
-        $resolved = $resolver->resolve(MyAbstractContainerService::class);
+        $resolved = $resolver->construct(MyAbstractContainerService::class);
 
         assert($resolved instanceof MyAbstractContainerService);
         assert($resolved->container === $container);
@@ -48,7 +48,7 @@ describe('DependencyResolver::resolve()', function () {
 
         $resolver = new DependencyResolver($container);
 
-        $resolved = $resolver->resolve(MySelfDependencyService::class);
+        $resolved = $resolver->construct(MySelfDependencyService::class);
 
         assert($resolved instanceof MySelfDependencyService);
         assert($resolved !== $service);
@@ -64,7 +64,7 @@ describe('DependencyResolver::resolve()', function () {
 
         $resolver = new DependencyResolver($container);
 
-        $resolved = $resolver->resolve(MyParentDependencyService::class);
+        $resolved = $resolver->construct(MyParentDependencyService::class);
 
         assert($resolved instanceof MyParentDependencyService);
         assert($resolved->parent instanceof MySelfDependencyService);
@@ -77,7 +77,7 @@ describe('DependencyResolver::resolve()', function () {
             $container->set(ContainerInterface::class, $container);
             $resolver = new DependencyResolver($container);
 
-            $resolved = $resolver->resolve(MyUnionTypeDependencyService::class);
+            $resolved = $resolver->construct(MyUnionTypeDependencyService::class);
 
             assert($resolved instanceof MyUnionTypeDependencyService);
             assert($resolved->input === $container);
@@ -88,7 +88,7 @@ describe('DependencyResolver::resolve()', function () {
         $container = new ArrayContainer();
         $resolver = new DependencyResolver($container);
 
-        $resolved = $resolver->resolve(MyConcreteContainerService::class);
+        $resolved = $resolver->construct(MyConcreteContainerService::class);
 
         assert($resolved instanceof MyConcreteContainerService);
         assert($resolved->container instanceof ArrayContainer);
@@ -98,7 +98,7 @@ describe('DependencyResolver::resolve()', function () {
     it('should instantiate a class falling back to default values, if possible', function () {
         $resolver = new DependencyResolver();
 
-        $resolved = $resolver->resolve(MyOptionalArgumentService::class);
+        $resolved = $resolver->construct(MyOptionalArgumentService::class);
 
         assert($resolved instanceof MyOptionalArgumentService);
         assert($resolved->name === 'MyOptionalArgumentService');
@@ -107,7 +107,7 @@ describe('DependencyResolver::resolve()', function () {
     it('should instantiate a class falling back to null when there is no other choice', function () {
         $resolver = new DependencyResolver();
 
-        $resolved = $resolver->resolve(MyNullableArgumentService::class);
+        $resolved = $resolver->construct(MyNullableArgumentService::class);
 
         assert($resolved instanceof MyNullableArgumentService);
         assert($resolved->container === null);
@@ -117,7 +117,7 @@ describe('DependencyResolver::resolve()', function () {
         $resolver = new DependencyResolver();
 
         try {
-            $resolver->resolve(MyAbstractClass::class);
+            $resolver->construct(MyAbstractClass::class);
         } catch (Exception $exception) {
             // passthru
         }
@@ -131,7 +131,7 @@ describe('DependencyResolver::resolve()', function () {
         $resolver = new DependencyResolver();
 
         try {
-            $resolver->resolve(MyAbstractContainerService::class);
+            $resolver->construct(MyAbstractContainerService::class);
         } catch (Exception $exception) {
             // passthru
         }
@@ -147,7 +147,7 @@ describe('DependencyResolver::resolve()', function () {
         $resolver = new DependencyResolver();
 
         try {
-            $resolver->resolve(MyUnresolvableScalarArgumentService::class);
+            $resolver->construct(MyUnresolvableScalarArgumentService::class);
         } catch (Exception $exception) {
             // passthru
         }
@@ -163,7 +163,7 @@ describe('DependencyResolver::resolve()', function () {
         $resolver = new DependencyResolver();
 
         try {
-            $resolver->resolve(MyUntypedArgumentService::class);
+            $resolver->construct(MyUntypedArgumentService::class);
         } catch (Exception $exception) {
             // passthru
         }
