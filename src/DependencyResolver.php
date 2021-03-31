@@ -48,7 +48,11 @@ final class DependencyResolver
      */
     public function construct(string $className, array $bindings = [])
     {
-        $reflection = self::reflectClass($className);
+        try {
+            $reflection = self::reflectClass($className);
+        } catch (ReflectionException $exception) {
+            throw new InvalidArgumentException("Cannot reflect the given className: `{$className}`.", 0, $exception);
+        }
 
         if (! $reflection->isInstantiable()) {
             throw new ClassCannotBeInstantiated($className);
