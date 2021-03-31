@@ -41,6 +41,28 @@ final class DependencyResolver
 
     /**
      * @param string $className
+     * @return mixed|object|void
+     *
+     * @throws InvalidArgumentException If class does not exist.
+     * @throws ContainerExceptionInterface If error occurs while retrieving the existing entry from the container.
+     * @throws ClassCannotBeInstantiated If class cannot be instantiated.
+     * @throws CannotAutowireDependencyArgument If a dependency (of any nesting level) cannot be resolved.
+     */
+    public function resolve(string $className)
+    {
+        if (! class_exists($className) && ! interface_exists($className)) {
+            throw new InvalidArgumentException("`{$className}` is not a valid class name.");
+        }
+
+        if ($this->container->has($className)) {
+            return $this->container->get($className);
+        }
+
+        return $this->construct($className);
+    }
+
+    /**
+     * @param string $className
      * @param array $bindings
      *
      * @throws ClassCannotBeInstantiated
@@ -48,11 +70,11 @@ final class DependencyResolver
      */
     public function construct(string $className, array $bindings = [])
     {
-        try {
-            $reflection = self::reflectClass($className);
-        } catch (ReflectionException $exception) {
-            throw new InvalidArgumentException("Cannot reflect the given className: `{$className}`.", 0, $exception);
+        if (! class_exists($className) && ! interface_exists($className)) {
+            throw new InvalidArgumentException("`{$className}` is not a valid calss name.");
         }
+
+        $reflection = self::reflectClass($className);
 
         if (! $reflection->isInstantiable()) {
             throw new ClassCannotBeInstantiated($className);
