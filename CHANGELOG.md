@@ -10,10 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename `DependencyResolver::resolve()` to `DependencyResolver::construct()`.
 - Improve exceptions handling.
 
-## Added
+### Added
 - Add `DependencyResolver::resolve()` to prefer already defined container entries.
 
-## Fixed
+### Fixed
 - Fix PHP7.1 incompatibility.
 
 ## [0.4.0] - 2021-03-24
