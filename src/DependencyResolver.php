@@ -222,16 +222,12 @@ final class DependencyResolver
                 return new ReflectionMethod($callable[0], $callable[1]);
             }
         } catch (ReflectionException $exception) {
-            throw new RuntimeException(
-                sprintf('Failed reflecting the given callable: %s.', get_debug_type($callable)),
-                0,
-                $exception
-            );
+            $type = is_object($callable) ? get_class($callable) : gettype($callable);
+            throw new RuntimeException("Failed reflecting the given callable: {$type}.", 0, $exception);
         }
 
-        throw new InvalidArgumentException(
-            sprintf("Cannot reflect the given callable: %s.", get_debug_type($callable))
-        );
+        $type = is_object($callable) ? get_class($callable) : gettype($callable);
+        throw new InvalidArgumentException("Cannot reflect the given callable: {$type}.");
     }
 
     /**
