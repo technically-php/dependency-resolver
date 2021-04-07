@@ -36,16 +36,15 @@ final class MyFancyService
     }
 }
 
-// Resolve service instance, providing dependencies in-place:
+// Construct service instance, providing dependencies in-place:
 $resolver = new DependencyResolver();
-$service = $resolver->resolve(MyFancyService::class, [
+$service = $resolver->construct(MyFancyService::class, [
     'log' => function (string $priority, string $message) {
         error_log("[$priority]: $message");
     }]
 );
 
-// Resolve service instance, resolving dependencies from container:
-$container->set(LoggerInterface::class, $logger);
+// Resolve service instance from container, falling back to `construct()` otherwise.
 $resolver = new DependencyResolver($container);
 $service = $resolver->resolve(MyFancyService::class);
 
