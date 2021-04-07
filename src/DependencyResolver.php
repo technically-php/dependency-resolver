@@ -2,20 +2,11 @@
 
 namespace Technically\DependencyResolver;
 
-use Closure;
 use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionFunction;
-use ReflectionFunctionAbstract;
-use ReflectionMethod;
-use ReflectionNamedType;
-use ReflectionParameter;
-use RuntimeException;
-use Technically\DependencyResolver\Arguments\Argument;
-use Technically\DependencyResolver\Arguments\Type;
+use Technically\CallableReflection\CallableReflection;
+use Technically\CallableReflection\Parameters\ParameterReflection;
 use Technically\DependencyResolver\Exceptions\CannotAutowireArgument;
 use Technically\DependencyResolver\Exceptions\CannotAutowireDependencyArgument;
 use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
@@ -28,11 +19,6 @@ final class DependencyResolver
      * @var ContainerInterface
      */
     private $container;
-
-    /**
-     * @var ReflectionClass[]
-     */
-    private static $reflections = [];
 
     public function __construct(?ContainerInterface $container = null)
     {
@@ -71,114 +57,89 @@ final class DependencyResolver
     public function construct(string $className, array $bindings = [])
     {
         if (! class_exists($className) && ! interface_exists($className)) {
-            throw new InvalidArgumentException("`{$className}` is not a valid calss name.");
+            throw new InvalidArgumentException("`{$className}` is not a valid class name.");
         }
 
-        $reflection = self::reflectClass($className);
-
-        if (! $reflection->isInstantiable()) {
+        try {
+            $reflection = CallableReflection::fromConstructor($className);
+        } catch (InvalidArgumentException $exception) {
             throw new ClassCannotBeInstantiated($className);
         }
 
-        $values = [];
-
-        if ($constructor = $reflection->getConstructor()) {
-            $arguments = $this->parseArguments($constructor);
-
-            try {
-                $values = $this->resolveArguments($arguments, $bindings);
-            } catch (CannotAutowireArgument $exception) {
-                throw new CannotAutowireDependencyArgument($className, $exception->getArgumentName(), $exception);
-            }
+        try {
+            $values = $this->resolveParameters($reflection->getParameters(), $bindings);
+        } catch (CannotAutowireArgument $exception) {
+            throw new CannotAutowireDependencyArgument($className, $exception->getArgumentName(), $exception);
         }
 
-        return $reflection->newInstanceArgs($values);
+        return $reflection->apply($values ?? []);
     }
 
-    public function call(callable $callback, array $bindings = [])
+    public function call(callable $callable, array $bindings = [])
     {
-        $reflection = self::reflectCallable($callback);
+        $reflection = CallableReflection::fromCallable($callable);
 
-        $arguments = $this->parseArguments($reflection);
-        $values = $this->resolveArguments($arguments, $bindings);
+        $values = $this->resolveParameters($reflection->getParameters(), $bindings);
 
-        return ($callback)(...$values);
+        return $reflection->apply($values);
     }
 
     /**
-     * @param ReflectionFunctionAbstract $function
-     * @return Argument[]
-     */
-    private function parseArguments(ReflectionFunctionAbstract $function): array
-    {
-        $arguments = [];
-        foreach ($function->getParameters() as $parameter) {
-            $className = $function instanceof ReflectionMethod ? $function->getDeclaringClass()->getName() : null;
-            $types = $this->getParameterTypes($parameter, $className);
-
-            $arguments[] = new Argument(
-                $parameter->getName(),
-                $types,
-                $parameter->isOptional(),
-                $parameter->allowsNull(),
-                $parameter->isOptional() ? $parameter->getDefaultValue() : null
-            );
-        }
-
-        return $arguments;
-    }
-
-    /**
-     * @param Argument[] $arguments
+     * @param ParameterReflection[] $parameters
      * @param array $bindings
      * @return array
      *
      * @throws CannotAutowireArgument
      */
-    private function resolveArguments(array $arguments, array $bindings = []): array
+    private function resolveParameters(array $parameters, array $bindings = []): array
     {
         $values = [];
-        foreach ($arguments as $argument) {
-            $values[] = $this->resolveArgument($argument, $bindings);
+        foreach ($parameters as $i => $parameter) {
+            if (array_key_exists($i, $bindings)) {
+                $values[] = $bindings[$i];
+                continue;
+            }
+
+            if (array_key_exists($parameter->getName(), $bindings)) {
+                $values[] = $bindings[$parameter->getName()];
+                continue;
+            }
+
+            $values[] = $this->resolveParameter($parameter);
         }
 
         return $values;
     }
 
     /**
-     * @param Argument $argument
-     * @param array $bindings
+     * @param ParameterReflection $parameter
      * @return mixed|null
      *
      * @throws CannotAutowireArgument
      */
-    private function resolveArgument(Argument $argument, array $bindings)
+    private function resolveParameter(ParameterReflection $parameter)
     {
-        if (array_key_exists($argument->getName(), $bindings)) {
-            return $bindings[$argument->getName()];
-        }
-
-        foreach ($argument->getTypes() as $type) {
-            $class = $type->getClassName();
-            if (! empty($class) && $this->container->has($class)) {
+        foreach ($parameter->getTypes() as $type) {
+            if ($type->isClassRequirement() && $this->container->has($class = $type->getClassRequirement())) {
                 try {
                     return $this->container->get($class);
                 } catch (ContainerExceptionInterface $exception) {
-                    throw new CannotAutowireArgument($argument->getName());
+                    throw new CannotAutowireArgument($parameter->getName());
                 }
             }
         }
 
-        if ($argument->isOptional()) {
-            return $argument->getDefaultValue();
+        if ($parameter->isOptional()) {
+            return $parameter->getDefaultValue();
         }
 
-        if ($argument->isNullable() && count($argument->getTypes()) > 0) {
+        if ($parameter->isNullable() && count($parameter->getTypes()) > 0) {
             return null;
         }
 
-        foreach ($argument->getTypes() as $type) {
-            if ($class = $type->getClassName()) {
+        foreach ($parameter->getTypes() as $type) {
+            if ($type->isClassRequirement()) {
+                $class = $type->getClassRequirement();
                 try {
                     return $this->construct($class);
                 } catch (DependencyResolutionException $exception) {
@@ -187,74 +148,6 @@ final class DependencyResolver
             }
         }
 
-        throw new CannotAutowireArgument($argument->getName());
-    }
-
-    private static function reflectClass(string $class): ReflectionClass
-    {
-        if (isset(self::$reflections[$class])) {
-            return self::$reflections[$class];
-        }
-
-        return self::$reflections[$class] = new ReflectionClass($class);
-    }
-
-    private static function reflectCallable(callable $callable): ReflectionFunctionAbstract
-    {
-        try {
-            if ($callable instanceof Closure) {
-                return new ReflectionFunction($callable);
-            }
-
-            if (is_string($callable) && function_exists($callable)) {
-                return new ReflectionFunction($callable);
-            }
-
-            if (is_string($callable) && str_contains($callable, '::')) {
-                return new ReflectionMethod($callable);
-            }
-
-            if (is_object($callable) && method_exists($callable, '__invoke')) {
-                return new ReflectionMethod($callable, '__invoke');
-            }
-
-            if (is_array($callable)) {
-                return new ReflectionMethod($callable[0], $callable[1]);
-            }
-        } catch (ReflectionException $exception) {
-            $type = is_object($callable) ? get_class($callable) : gettype($callable);
-            throw new RuntimeException("Failed reflecting the given callable: {$type}.", 0, $exception);
-        }
-
-        $type = is_object($callable) ? get_class($callable) : gettype($callable);
-        throw new InvalidArgumentException("Cannot reflect the given callable: {$type}.");
-    }
-
-    /**
-     * @param ReflectionParameter $parameter
-     * @param string|null $className
-     * @return Type[]
-     */
-    private function getParameterTypes(ReflectionParameter $parameter, ?string $className = null): array
-    {
-        $type = $parameter->getType();
-
-        if ($type instanceof ReflectionNamedType) {
-            return [
-                new Type($type->getName(), $className),
-            ];
-        }
-
-        /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
-        if (class_exists(\ReflectionUnionType::class) && $type instanceof \ReflectionUnionType) {
-             return array_map(
-                function (ReflectionNamedType $type) use ($className): Type {
-                    return new Type($type->getName(), $className);
-                },
-                $type->getTypes()
-            );
-        }
-
-        return [];
+        throw new CannotAutowireArgument($parameter->getName());
     }
 }

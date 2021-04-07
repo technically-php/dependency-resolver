@@ -11,7 +11,8 @@
     "require": {
         "php": ">=7.1",
         "psr/container": "^1.0",
-        "technically/null-container": "^1.0"
+        "technically/null-container": "^1.0",
+        "technically/callable-reflection": "^0.3.0"
     },
     "require-dev": {
         "peridot-php/peridot": "^1.19",
