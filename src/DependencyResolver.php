@@ -2,6 +2,7 @@
 
 namespace Technically\DependencyResolver;
 
+use ArgumentCountError;
 use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -75,6 +76,14 @@ final class DependencyResolver
         return $reflection->apply($values ?? []);
     }
 
+    /**
+     * @param callable $callable
+     * @param array $bindings
+     * @return mixed
+     *
+     * @throws ArgumentCountError
+     * @throws CannotAutowireArgument
+     */
     public function call(callable $callable, array $bindings = [])
     {
         $reflection = CallableReflection::fromCallable($callable);
