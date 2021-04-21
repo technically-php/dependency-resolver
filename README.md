@@ -58,7 +58,7 @@ All notable changes to this project will be documented in the [CHANGELOG](./CHAN
 
 ## Credits
 
-- Implemented by [Ivan Voskoboinyk][3]
+- Implemented by :space_invader: [Ivan Voskoboinyk][3]
 - Heavily inspired by Dawid Kraczkowski's work in [igniphp/container][4]
 
 [1]: https://www.php-fig.org/psr/psr-11/
