@@ -6,6 +6,7 @@ use Technically\DependencyResolver\DependencyResolver;
 use Technically\DependencyResolver\Specs\Fixtures\MyInstanceMethodService;
 use Technically\DependencyResolver\Specs\Fixtures\MyInvokableService;
 use Technically\DependencyResolver\Specs\Fixtures\MyStaticMethodService;
+use Technically\NullContainer\NullContainer;
 
 describe('DependencyResolver::call()', function () {
     it('should call global functions by name', function () {
@@ -101,5 +102,23 @@ describe('DependencyResolver::call()', function () {
 
         assert(is_array($ret));
         assert(count($ret) === 1);
+    });
+
+    it('should call function by passing variadic parameter value explicitly', function () {
+        $container = new ArrayContainer();
+        $container->set(ContainerInterface::class, $container);
+        $resolver = new DependencyResolver($container);
+
+        $null = new NullContainer();
+
+        $ret = $resolver->call(function (ContainerInterface ...$containers) {
+            return $containers;
+        }, [
+            'containers' => [$null],
+        ]);
+
+        assert(is_array($ret));
+        assert(count($ret) === 1);
+        assert($ret === [$null]);
     });
 });

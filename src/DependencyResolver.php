@@ -110,7 +110,11 @@ final class DependencyResolver
             }
 
             if (array_key_exists($parameter->getName(), $bindings)) {
-                $values[] = $bindings[$parameter->getName()];
+                if ($parameter->isVariadic()) {
+                    $values = array_merge($values, $bindings[$parameter->getName()]);
+                } else {
+                    $values[] = $bindings[$parameter->getName()];
+                }
                 continue;
             }
 
