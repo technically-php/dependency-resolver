@@ -1,5 +1,6 @@
 <?php
 
+use Psr\Container\ContainerInterface;
 use Technically\ArrayContainer\ArrayContainer;
 use Technically\DependencyResolver\DependencyResolver;
 use Technically\DependencyResolver\Specs\Fixtures\MyInstanceMethodService;
@@ -87,5 +88,18 @@ describe('DependencyResolver::call()', function () {
         assert($r === $resolver);
         assert($m === 'Hello');
         assert($n === null);
+    });
+
+    it('should resolve typed variadic parameters', function () {
+        $container = new ArrayContainer();
+        $container->set(ContainerInterface::class, $container);
+        $resolver = new DependencyResolver($container);
+
+        $ret = $resolver->call(function (ContainerInterface ...$containers) {
+            return $containers;
+        });
+
+        assert(is_array($ret));
+        assert(count($ret) === 1);
     });
 });
