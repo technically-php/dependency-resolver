@@ -1,10 +1,11 @@
-![Status][badge]
-
 # Technically Dependency Resolver
 
 `Technically\DependencyResolver` is a simple yet powerful tool to instantiate classes
 autowiring their dependencies by resolving them from a [PSR-11][1] container 
 or recursively instantiating them with *DependencyResolver* itself.
+
+![Status][badge]
+
 
 ## Features
 
@@ -15,6 +16,7 @@ or recursively instantiating them with *DependencyResolver* itself.
 - Semver
 - Tests
 
+
 ## Installation
 
 Use [Composer][2] package manager to add *Technically\DependencyResolver* to your project:
@@ -22,6 +24,7 @@ Use [Composer][2] package manager to add *Technically\DependencyResolver* to you
 ```
 composer require technically/dependency-resolver
 ```
+
 
 ## Example
 
@@ -50,6 +53,7 @@ $service = $resolver->resolve(MyFancyService::class);
 
 
 ```
+
 
 ## Changelog
 
