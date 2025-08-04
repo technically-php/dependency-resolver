@@ -10,7 +10,7 @@ or recursively instantiating them with *DependencyResolver* itself.
 ## Features
 
 - Based on PSR-11
-- PHP 8.0 ready (supports union type hints; see examples below)
+- Supports PHP 8 (8.0, 8.1, 8.2, 8.3 and 8.4) &mdash; full support of union type hints, and other modern features.
 - PHP 7.1+ compatible
 - Recursive dependencies autowiring
 - Semver
@@ -39,7 +39,7 @@ final class MyFancyService
     }
 }
 
-// Construct service instance, providing dependencies in-place:
+// Construct a service instance, providing dependencies in-place:
 $resolver = new DependencyResolver();
 $service = $resolver->construct(MyFancyService::class, [
     'log' => function (string $priority, string $message) {
