@@ -5,9 +5,9 @@ namespace Technically\DependencyResolver\Exceptions;
 final class ClassCannotBeInstantiated extends DependencyResolutionException
 {
     /**
-     * @var string
+     * @var class-string
      */
-    private $className;
+    private string $className;
 
     public function __construct(string $className)
     {
@@ -17,7 +17,7 @@ final class ClassCannotBeInstantiated extends DependencyResolutionException
     }
 
     /**
-     * @return string
+     * @return class-string
      */
     public function getClassName(): string
     {

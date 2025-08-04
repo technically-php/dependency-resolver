@@ -9,7 +9,7 @@ final class CannotAutowireArgument extends DependencyResolutionException
     /**
      * @var string
      */
-    private $argumentName;
+    private string $argumentName;
 
     /**
      * @param string $argumentName
