@@ -9,12 +9,12 @@ final class CannotAutowireDependencyArgument extends DependencyResolutionExcepti
     /**
      * @var string
      */
-    private $dependencyName;
+    private string $dependencyName;
 
     /**
      * @var string
      */
-    private $argumentName;
+    private string $argumentName;
 
     /**
      * @param string $dependencyName

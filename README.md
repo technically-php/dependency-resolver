@@ -10,8 +10,7 @@ or recursively instantiating them with *DependencyResolver* itself.
 ## Features
 
 - Based on PSR-11
-- Supports PHP 8 (8.0, 8.1, 8.2, 8.3 and 8.4) &mdash; full support of union type hints, and other modern features.
-- PHP 7.1+ compatible
+- Supports modern PHP 8 features (up to PHP 8.4) &mdash; full support of union type hints, and others.
 - Recursive dependencies autowiring
 - Semver
 - Tests

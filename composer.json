@@ -9,14 +9,14 @@
         "auto-wiring"
     ],
     "require": {
-        "php": "^7.1|^8.0",
-        "psr/container": "^1.0|^2.0",
-        "technically/null-container": "^1.0",
-        "technically/callable-reflection": "^0.4.0"
+        "php": "^8.0",
+        "psr/container": "^2.0",
+        "technically/null-container": "^2.0",
+        "technically/callable-reflection": "^0.4.2"
     },
     "require-dev": {
         "peridot-php/peridot": "^1.19",
-        "technically/array-container": "^1.0"
+        "technically/array-container": "^2.0"
     },
     "license": "MIT",
     "authors": [

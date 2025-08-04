@@ -16,10 +16,7 @@ use Technically\NullContainer\NullContainer;
 
 final class DependencyResolver
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(?ContainerInterface $container = null)
     {
@@ -28,14 +25,14 @@ final class DependencyResolver
 
     /**
      * @param string $className
-     * @return mixed|object|void
+     * @return mixed
      *
      * @throws InvalidArgumentException If class does not exist.
      * @throws ContainerExceptionInterface If error occurs while retrieving the existing entry from the container.
      * @throws ClassCannotBeInstantiated If class cannot be instantiated.
      * @throws CannotAutowireDependencyArgument If a dependency (of any nesting level) cannot be resolved.
      */
-    public function resolve(string $className)
+    public function resolve(string $className): mixed
     {
         if (! class_exists($className) && ! interface_exists($className)) {
             throw new InvalidArgumentException("`{$className}` is not a valid class name.");
@@ -51,11 +48,12 @@ final class DependencyResolver
     /**
      * @param string $className
      * @param array $bindings
+     * @return mixed
      *
      * @throws ClassCannotBeInstantiated
      * @throws CannotAutowireDependencyArgument
      */
-    public function construct(string $className, array $bindings = [])
+    public function construct(string $className, array $bindings = []): mixed
     {
         if (! class_exists($className) && ! interface_exists($className)) {
             throw new InvalidArgumentException("`{$className}` is not a valid class name.");
@@ -84,7 +82,7 @@ final class DependencyResolver
      * @throws ArgumentCountError
      * @throws CannotAutowireArgument
      */
-    public function call(callable $callable, array $bindings = [])
+    public function call(callable $callable, array $bindings = []): mixed
     {
         $reflection = CallableReflection::fromCallable($callable);
 
@@ -130,7 +128,7 @@ final class DependencyResolver
      *
      * @throws CannotAutowireArgument
      */
-    private function resolveParameter(ParameterReflection $parameter)
+    private function resolveParameter(ParameterReflection $parameter): mixed
     {
         foreach ($parameter->getTypes() as $type) {
             if ($type->isClassRequirement() && $this->container->has($class = $type->getClassRequirement())) {
