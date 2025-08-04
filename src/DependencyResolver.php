@@ -8,13 +8,14 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Technically\CallableReflection\CallableReflection;
 use Technically\CallableReflection\Parameters\ParameterReflection;
+use Technically\DependencyResolver\Contracts\DependencyResolver as DependencyResolverInterface;
 use Technically\DependencyResolver\Exceptions\CannotAutowireArgument;
 use Technically\DependencyResolver\Exceptions\CannotAutowireDependencyArgument;
 use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
 use Technically\DependencyResolver\Exceptions\DependencyResolutionException;
 use Technically\NullContainer\NullContainer;
 
-final class DependencyResolver
+final class DependencyResolver implements DependencyResolverInterface
 {
     private ContainerInterface $container;
 
@@ -24,7 +25,7 @@ final class DependencyResolver
     }
 
     /**
-     * @param string $className
+     * @param class-string $className
      * @return mixed
      *
      * @throws InvalidArgumentException If class does not exist.
@@ -46,8 +47,8 @@ final class DependencyResolver
     }
 
     /**
-     * @param string $className
-     * @param array $bindings
+     * @param class-string $className
+     * @param array<string,mixed> $bindings
      * @return mixed
      *
      * @throws ClassCannotBeInstantiated
@@ -75,9 +76,10 @@ final class DependencyResolver
     }
 
     /**
-     * @param callable $callable
-     * @param array $bindings
-     * @return mixed
+     * @template T
+     * @param callable():T        $callable
+     * @param array<string,mixed> $bindings
+     * @return T
      *
      * @throws ArgumentCountError
      * @throws CannotAutowireArgument
@@ -93,7 +95,7 @@ final class DependencyResolver
 
     /**
      * @param ParameterReflection[] $parameters
-     * @param array $bindings
+     * @param array<string,mixed>   $bindings
      * @return array
      *
      * @throws CannotAutowireArgument
