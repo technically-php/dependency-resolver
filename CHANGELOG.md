@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2025-08-04
+### Added
+- `DependencyResolver` interface
+### Changed
+- Minimal supported PHP version to 8.0
+- Minimal PSR-11 container interface version is 2.0
+
 ## [0.7.0] - 2021-04-21
 ### Added
 - Implement typed variadic parameter resolution support.
