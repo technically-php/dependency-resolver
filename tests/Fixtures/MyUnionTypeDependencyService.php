@@ -1,6 +1,6 @@
 <?php /** @noinspection PhpLanguageLevelInspection */
 
-namespace Technically\DependencyResolver\Specs\Fixtures;
+namespace Technically\DependencyResolver\Tests\Fixtures;
 
 use Psr\Container\ContainerInterface;
 

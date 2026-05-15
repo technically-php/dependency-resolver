@@ -1,10 +1,10 @@
 <?php
 
-namespace Technically\DependencyResolver\Specs\Fixtures;
+namespace Technically\DependencyResolver\Tests\Fixtures;
 
 final class MyUnresolvableScalarArgumentService
 {
-    public $name;
+    public string $name;
 
     public function __construct(string $name)
     {

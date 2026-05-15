@@ -17,8 +17,9 @@ interface DependencyResolver
      * It can be either found in the container or constructed on the fly,
      * recursively auto-resolving the required parameters.
      *
-     * @param class-string $className
-     * @return mixed
+     * @template T
+     * @param class-string<T> $className
+     * @return T
      *
      * @throws InvalidArgumentException If the class does not exist.
      * @throws ContainerExceptionInterface If an error occurs while retrieving the existing entry from the container.
@@ -33,9 +34,10 @@ interface DependencyResolver
      * Even if the container already has the instance bound,
      * it will still be instantiated.
      *
-     * @param class-string        $className
+     * @template T
+     * @param class-string<T>     $className
      * @param array<string,mixed> $bindings
-     * @return mixed
+     * @return T
      *
      * @throws ClassCannotBeInstantiated
      * @throws CannotAutowireDependencyArgument

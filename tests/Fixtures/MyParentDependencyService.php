@@ -1,10 +1,10 @@
 <?php
 
-namespace Technically\DependencyResolver\Specs\Fixtures;
+namespace Technically\DependencyResolver\Tests\Fixtures;
 
 final class MyParentDependencyService extends MySelfDependencyService
 {
-    public function __construct(parent $parent = null)
+    public function __construct(?parent $parent = null)
     {
         parent::__construct($parent);
     }

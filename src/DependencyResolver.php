@@ -25,8 +25,9 @@ final class DependencyResolver implements DependencyResolverInterface
     }
 
     /**
-     * @param class-string $className
-     * @return mixed
+     * @template T
+     * @param class-string<T> $className
+     * @return T
      *
      * @throws InvalidArgumentException If class does not exist.
      * @throws ContainerExceptionInterface If error occurs while retrieving the existing entry from the container.
@@ -47,9 +48,10 @@ final class DependencyResolver implements DependencyResolverInterface
     }
 
     /**
-     * @param class-string $className
+     * @template T
+     * @param class-string<T> $className
      * @param array<string,mixed> $bindings
-     * @return mixed
+     * @return T
      *
      * @throws ClassCannotBeInstantiated
      * @throws CannotAutowireDependencyArgument
@@ -125,7 +127,6 @@ final class DependencyResolver implements DependencyResolverInterface
     }
 
     /**
-     * @param ParameterReflection $parameter
      * @return mixed|null
      *
      * @throws CannotAutowireArgument
@@ -136,7 +137,7 @@ final class DependencyResolver implements DependencyResolverInterface
             if ($type->isClassRequirement() && $this->container->has($class = $type->getClassRequirement())) {
                 try {
                     return $this->container->get($class);
-                } catch (ContainerExceptionInterface $exception) {
+                } catch (ContainerExceptionInterface) {
                     throw new CannotAutowireArgument($parameter->getName());
                 }
             }
@@ -155,7 +156,7 @@ final class DependencyResolver implements DependencyResolverInterface
                 $class = $type->getClassRequirement();
                 try {
                     return $this->construct($class);
-                } catch (DependencyResolutionException $exception) {
+                } catch (DependencyResolutionException) {
                     // try another one
                 }
             }

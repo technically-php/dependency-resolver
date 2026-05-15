@@ -21,12 +21,12 @@ final class CannotAutowireDependencyArgument extends DependencyResolutionExcepti
      * @param string $argumentName
      * @param Throwable|null $previous
      */
-    public function __construct(string $dependencyName, string $argumentName, Throwable $previous = null)
+    public function __construct(string $dependencyName, string $argumentName, Throwable | null $previous = null)
     {
         $this->dependencyName = $dependencyName;
         $this->argumentName = $argumentName;
 
-        parent::__construct("Could not autowire argument `{$argumentName}` for `${dependencyName}`.", 0, $previous);
+        parent::__construct("Could not autowire argument `{$argumentName}` for `{$dependencyName}`.", 0, $previous);
     }
 
     /**
