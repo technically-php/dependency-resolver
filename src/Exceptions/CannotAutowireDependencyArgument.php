@@ -26,7 +26,7 @@ final class CannotAutowireDependencyArgument extends DependencyResolutionExcepti
         $this->dependencyName = $dependencyName;
         $this->argumentName = $argumentName;
 
-        parent::__construct("Could not autowire argument `{$argumentName}` for `${dependencyName}`.", 0, $previous);
+        parent::__construct("Could not autowire argument `{$argumentName}` for `{$dependencyName}`.", 0, $previous);
     }
 
     /**

@@ -12,7 +12,7 @@
         "php": "^8.2",
         "psr/container": "^2.0",
         "technically/null-container": "^2.0",
-        "technically/callable-reflection": "^0.4.2"
+        "technically/callable-reflection": "^0.5.0"
     },
     "require-dev": {
         "technically/array-container": "^2.0",

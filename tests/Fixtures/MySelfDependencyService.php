@@ -6,7 +6,7 @@ class MySelfDependencyService
 {
     public $parent;
 
-    public function __construct(self $parent = null)
+    public function __construct(?self $parent = null)
     {
         $this->parent = $parent;
     }
