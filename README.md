@@ -1,7 +1,7 @@
 # Technically Dependency Resolver
 
 `Technically\DependencyResolver` is a simple yet powerful tool to instantiate classes
-autowiring their dependencies by resolving them from a [PSR-11][1] container 
+autowiring their dependencies by resolving them from a [PSR-11] container 
 or recursively instantiating them with *DependencyResolver* itself.
 
 ![Status][badge]
@@ -10,7 +10,7 @@ or recursively instantiating them with *DependencyResolver* itself.
 ## Features
 
 - Based on PSR-11
-- Supports modern PHP 8 features (up to PHP 8.4) &mdash; full support of union type hints, and others.
+- Supports modern PHP 8 features &mdash; union types, `null` and `false` type hints, and others.
 - Recursive dependencies autowiring
 - Semver
 - Tests
@@ -18,7 +18,7 @@ or recursively instantiating them with *DependencyResolver* itself.
 
 ## Installation
 
-Use [Composer][2] package manager to add *Technically\DependencyResolver* to your project:
+Use [Composer] package manager to add *Technically\DependencyResolver* to your project:
 
 ```
 composer require technically/dependency-resolver
@@ -61,12 +61,12 @@ All notable changes to this project will be documented in the [CHANGELOG](./CHAN
 
 ## Credits
 
-- Implemented by :space_invader: [Ivan Voskoboinyk][3]
-- Heavily inspired by Dawid Kraczkowski's work in [igniphp/container][4]
+- Implemented by :space_invader: [Ivan Voskoboinyk]
+- Heavily inspired by Dawid Kraczkowski's work in [igniphp/container]
 
-[1]: https://www.php-fig.org/psr/psr-11/
-[2]: https://getcomposer.org/
-[3]: https://github.com/e1himself?utm_source=web&utm_medium=github&utm_campaign=technically/dependency-resolver
+[PSR-11]: https://www.php-fig.org/psr/psr-11/
+[Composer]: https://getcomposer.org/
+[Ivan Voskoboinyk]: https://voskoboinyk.com/?utm_source=web&utm_medium=github&utm_campaign=technically/dependency-resolver
 
-[4]: https://github.com/igniphp/container
+[igniphp/container]: https://github.com/igniphp/container
 [badge]: https://github.com/technically-php/dependency-resolver/actions/workflows/test.yml/badge.svg
