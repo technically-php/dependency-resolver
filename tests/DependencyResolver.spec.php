@@ -6,6 +6,6 @@ describe('DependencyResolver', function () {
     it('should instantiate', function () {
         $resolver = new DependencyResolver();
 
-        assert($resolver instanceof DependencyResolver);
+        expect($resolver)->toBeInstanceOf(DependencyResolver::class);
     });
 });

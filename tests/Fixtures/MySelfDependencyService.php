@@ -1,6 +1,6 @@
 <?php
 
-namespace Technically\DependencyResolver\Specs\Fixtures;
+namespace Technically\DependencyResolver\Tests\Fixtures;
 
 class MySelfDependencyService
 {

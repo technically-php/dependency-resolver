@@ -15,8 +15,8 @@
         "technically/callable-reflection": "^0.4.2"
     },
     "require-dev": {
-        "peridot-php/peridot": "^1.19",
-        "technically/array-container": "^2.0"
+        "technically/array-container": "^2.0",
+        "pestphp/pest": "^2.0 || ^3.0 || ^4.0"
     },
     "license": "MIT",
     "authors": [
@@ -33,7 +33,12 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Technically\\DependencyResolver\\Specs\\": "specs"
+            "Technically\\DependencyResolver\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     }
 }

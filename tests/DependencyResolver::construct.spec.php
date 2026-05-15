@@ -5,16 +5,16 @@ use Technically\ArrayContainer\ArrayContainer;
 use Technically\DependencyResolver\DependencyResolver;
 use Technically\DependencyResolver\Exceptions\CannotAutowireDependencyArgument;
 use Technically\DependencyResolver\Exceptions\ClassCannotBeInstantiated;
-use Technically\DependencyResolver\Specs\Fixtures\MyAbstractClass;
-use Technically\DependencyResolver\Specs\Fixtures\MyConcreteContainerService;
-use Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService;
-use Technically\DependencyResolver\Specs\Fixtures\MyNullableArgumentService;
-use Technically\DependencyResolver\Specs\Fixtures\MyOptionalArgumentService;
-use Technically\DependencyResolver\Specs\Fixtures\MyParentDependencyService;
-use Technically\DependencyResolver\Specs\Fixtures\MySelfDependencyService;
-use Technically\DependencyResolver\Specs\Fixtures\MyUnionTypeDependencyService;
-use Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService;
-use Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService;
+use Technically\DependencyResolver\Tests\Fixtures\MyAbstractClass;
+use Technically\DependencyResolver\Tests\Fixtures\MyConcreteContainerService;
+use Technically\DependencyResolver\Tests\Fixtures\MyAbstractContainerService;
+use Technically\DependencyResolver\Tests\Fixtures\MyNullableArgumentService;
+use Technically\DependencyResolver\Tests\Fixtures\MyOptionalArgumentService;
+use Technically\DependencyResolver\Tests\Fixtures\MyParentDependencyService;
+use Technically\DependencyResolver\Tests\Fixtures\MySelfDependencyService;
+use Technically\DependencyResolver\Tests\Fixtures\MyUnionTypeDependencyService;
+use Technically\DependencyResolver\Tests\Fixtures\MyUnresolvableScalarArgumentService;
+use Technically\DependencyResolver\Tests\Fixtures\MyUntypedArgumentService;
 
 describe('DependencyResolver::construct()', function () {
     it('should instantiate a class using the bindings passed', function () {
@@ -25,8 +25,8 @@ describe('DependencyResolver::construct()', function () {
             'container' => $container,
         ]);
 
-        assert($resolved instanceof MyAbstractContainerService);
-        assert($resolved->container === $container);
+        expect($resolved)->toBeInstanceOf(MyAbstractContainerService::class);
+        expect($resolved->container)->toBe($container);
     });
 
     it('should instantiate a class resolving dependencies from container, if possible', function () {
@@ -36,8 +36,8 @@ describe('DependencyResolver::construct()', function () {
 
         $resolved = $resolver->construct(MyAbstractContainerService::class);
 
-        assert($resolved instanceof MyAbstractContainerService);
-        assert($resolved->container === $container);
+        expect($resolved)->toBeInstanceOf(MyAbstractContainerService::class);
+        expect($resolved->container)->toBe($container);
     });
 
     it('should instantiate a class resolving self type dependency', function () {
@@ -50,10 +50,10 @@ describe('DependencyResolver::construct()', function () {
 
         $resolved = $resolver->construct(MySelfDependencyService::class);
 
-        assert($resolved instanceof MySelfDependencyService);
-        assert($resolved !== $service);
-        assert($resolved->parent instanceof MySelfDependencyService);
-        assert($resolved->parent === $service);
+        expect($resolved)->toBeInstanceOf(MySelfDependencyService::class);
+        expect($resolved)->not->toBe($service);
+        expect($resolved->parent)->toBeInstanceOf(MySelfDependencyService::class);
+        expect($resolved->parent)->toBe($service);
     });
 
     it('should instantiate a class resolving parent type dependency', function () {
@@ -66,9 +66,9 @@ describe('DependencyResolver::construct()', function () {
 
         $resolved = $resolver->construct(MyParentDependencyService::class);
 
-        assert($resolved instanceof MyParentDependencyService);
-        assert($resolved->parent instanceof MySelfDependencyService);
-        assert($resolved->parent === $service);
+        expect($resolved)->toBeInstanceOf(MyParentDependencyService::class);
+        expect($resolved->parent)->toBeInstanceOf(MySelfDependencyService::class);
+        expect($resolved->parent)->toBe($service);
     });
 
     if (PHP_MAJOR_VERSION >= 8) {
@@ -79,8 +79,8 @@ describe('DependencyResolver::construct()', function () {
 
             $resolved = $resolver->construct(MyUnionTypeDependencyService::class);
 
-            assert($resolved instanceof MyUnionTypeDependencyService);
-            assert($resolved->input === $container);
+            expect($resolved)->toBeInstanceOf(MyUnionTypeDependencyService::class);
+            expect($resolved->input)->toBe($container);
         });
     }
 
@@ -90,9 +90,9 @@ describe('DependencyResolver::construct()', function () {
 
         $resolved = $resolver->construct(MyConcreteContainerService::class);
 
-        assert($resolved instanceof MyConcreteContainerService);
-        assert($resolved->container instanceof ArrayContainer);
-        assert($resolved->container !== $container);
+        expect($resolved)->toBeInstanceOf(MyConcreteContainerService::class);
+        expect($resolved->container)->toBeInstanceOf(ArrayContainer::class);
+        expect($resolved->container)->not->toBe($container);
     });
 
     it('should instantiate a class falling back to default values, if possible', function () {
@@ -100,8 +100,8 @@ describe('DependencyResolver::construct()', function () {
 
         $resolved = $resolver->construct(MyOptionalArgumentService::class);
 
-        assert($resolved instanceof MyOptionalArgumentService);
-        assert($resolved->name === 'MyOptionalArgumentService');
+        expect($resolved)->toBeInstanceOf(MyOptionalArgumentService::class);
+        expect($resolved->name)->toBe('MyOptionalArgumentService');
     });
 
     it('should instantiate a class falling back to null when there is no other choice', function () {
@@ -109,8 +109,8 @@ describe('DependencyResolver::construct()', function () {
 
         $resolved = $resolver->construct(MyNullableArgumentService::class);
 
-        assert($resolved instanceof MyNullableArgumentService);
-        assert($resolved->container === null);
+        expect($resolved)->toBeInstanceOf(MyNullableArgumentService::class);
+        expect($resolved->container)->toBeNull();
     });
 
     it('should throw exception if class being resolved is abstract', function () {
@@ -122,9 +122,9 @@ describe('DependencyResolver::construct()', function () {
             // passthru
         }
 
-        assert(isset($exception));
-        assert($exception instanceof ClassCannotBeInstantiated);
-        assert($exception->getClassName() === MyAbstractClass::class);
+        expect(isset($exception))->toBeTrue();
+        expect($exception)->toBeInstanceOf(ClassCannotBeInstantiated::class);
+        expect($exception->getClassName())->toBe(MyAbstractClass::class);
     });
 
     it('should throw exception if dependency class cannot be autowired', function () {
@@ -136,11 +136,11 @@ describe('DependencyResolver::construct()', function () {
             // passthru
         }
 
-        assert(isset($exception));
-        assert($exception instanceof CannotAutowireDependencyArgument);
-        assert($exception->getDependencyName() === MyAbstractContainerService::class);
-        assert($exception->getArgumentName() === 'container');
-        assert($exception->getMessage() === 'Could not autowire argument `container` for `Technically\DependencyResolver\Specs\Fixtures\MyAbstractContainerService`.');
+        expect(isset($exception))->toBeTrue();
+        expect($exception)->toBeInstanceOf(CannotAutowireDependencyArgument::class);
+        expect($exception->getDependencyName())->toBe(MyAbstractContainerService::class);
+        expect($exception->getArgumentName())->toBe('container');
+        expect($exception->getMessage())->toBe('Could not autowire argument `container` for `Technically\DependencyResolver\Tests\Fixtures\MyAbstractContainerService`.');
     });
 
     it('should throw exception if scalar dependency cannot be autowired', function () {
@@ -152,11 +152,11 @@ describe('DependencyResolver::construct()', function () {
             // passthru
         }
 
-        assert(isset($exception));
-        assert($exception instanceof CannotAutowireDependencyArgument);
-        assert($exception->getDependencyName() === MyUnresolvableScalarArgumentService::class);
-        assert($exception->getArgumentName() === 'name');
-        assert($exception->getMessage() === 'Could not autowire argument `name` for `Technically\DependencyResolver\Specs\Fixtures\MyUnresolvableScalarArgumentService`.');
+        expect(isset($exception))->toBeTrue();
+        expect($exception)->toBeInstanceOf(CannotAutowireDependencyArgument::class);
+        expect($exception->getDependencyName())->toBe(MyUnresolvableScalarArgumentService::class);
+        expect($exception->getArgumentName())->toBe('name');
+        expect($exception->getMessage())->toBe('Could not autowire argument `name` for `Technically\DependencyResolver\Tests\Fixtures\MyUnresolvableScalarArgumentService`.');
     });
 
     it('should throw exception if untyped dependency cannot be autowired', function () {
@@ -168,10 +168,10 @@ describe('DependencyResolver::construct()', function () {
             // passthru
         }
 
-        assert(isset($exception));
-        assert($exception instanceof CannotAutowireDependencyArgument);
-        assert($exception->getDependencyName() === MyUntypedArgumentService::class);
-        assert($exception->getArgumentName() === 'input');
-        assert($exception->getMessage() === 'Could not autowire argument `input` for `Technically\DependencyResolver\Specs\Fixtures\MyUntypedArgumentService`.');
+        expect(isset($exception))->toBeTrue();
+        expect($exception)->toBeInstanceOf(CannotAutowireDependencyArgument::class);
+        expect($exception->getDependencyName())->toBe(MyUntypedArgumentService::class);
+        expect($exception->getArgumentName())->toBe('input');
+        expect($exception->getMessage())->toBe('Could not autowire argument `input` for `Technically\DependencyResolver\Tests\Fixtures\MyUntypedArgumentService`.');
     });
 });

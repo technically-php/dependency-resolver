@@ -12,8 +12,8 @@ describe('DependencyResolver::resolve()', function () {
 
         $resolved = $resolver->resolve(DependencyResolver::class);
 
-        assert($resolved instanceof DependencyResolver);
-        assert($resolved === $resolver);
+        expect($resolved)->toBeInstanceOf(DependencyResolver::class);
+        expect($resolved)->toBe($resolver);
     });
 
     it('should construct a new instance if container does not have it already', function () {
@@ -22,8 +22,8 @@ describe('DependencyResolver::resolve()', function () {
 
         $resolved = $resolver->resolve(DependencyResolver::class);
 
-        assert($resolved instanceof DependencyResolver);
-        assert($resolved !== $resolver);
+        expect($resolved)->toBeInstanceOf(DependencyResolver::class);
+        expect($resolved)->not->toBe($resolver);
     });
 
     it('should throw InvalidArgumentException if the given class does not exist', function () {
@@ -35,8 +35,8 @@ describe('DependencyResolver::resolve()', function () {
             // passthru
         }
 
-        assert(isset($exception));
-        assert($exception instanceof InvalidArgumentException);
-        assert($exception->getMessage() === '`Foo` is not a valid class name.');
+        expect(isset($exception))->toBeTrue();
+        expect($exception)->toBeInstanceOf(InvalidArgumentException::class);
+        expect($exception->getMessage())->toBe('`Foo` is not a valid class name.');
     });
 });
