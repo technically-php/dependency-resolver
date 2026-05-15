@@ -15,7 +15,7 @@ final class CannotAutowireArgument extends DependencyResolutionException
      * @param string $argumentName
      * @param Throwable|null $previous
      */
-    public function __construct(string $argumentName, Throwable $previous = null)
+    public function __construct(string $argumentName, Throwable | null $previous = null)
     {
         $this->argumentName = $argumentName;
 
