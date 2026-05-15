@@ -137,7 +137,7 @@ final class DependencyResolver implements DependencyResolverInterface
             if ($type->isClassRequirement() && $this->container->has($class = $type->getClassRequirement())) {
                 try {
                     return $this->container->get($class);
-                } catch (ContainerExceptionInterface $exception) {
+                } catch (ContainerExceptionInterface) {
                     throw new CannotAutowireArgument($parameter->getName());
                 }
             }
@@ -156,7 +156,7 @@ final class DependencyResolver implements DependencyResolverInterface
                 $class = $type->getClassRequirement();
                 try {
                     return $this->construct($class);
-                } catch (DependencyResolutionException $exception) {
+                } catch (DependencyResolutionException) {
                     // try another one
                 }
             }
