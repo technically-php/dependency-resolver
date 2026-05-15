@@ -9,7 +9,7 @@
         "auto-wiring"
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "psr/container": "^2.0",
         "technically/null-container": "^2.0",
         "technically/callable-reflection": "^0.4.2"
